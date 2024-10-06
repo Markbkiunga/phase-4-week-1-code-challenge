@@ -70,5 +70,17 @@ def power(id):
             return make_response({"errors": [str(e)]}, 400)
 
 
+@app.route("/hero_powers", methods=["POST"])
+def hero_powers():
+    try:
+        data = request.get_json() if request.is_json else request.form
+        hero_power = HeroPower(**data)
+        db.session.add(hero_power)
+        db.session.commit()
+        return make_response(hero_power.to_dict(), 201)
+    except ValueError as e:
+        return make_response({"errors": [str(e)]}, 400)
+
+
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
