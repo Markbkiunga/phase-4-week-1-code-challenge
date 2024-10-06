@@ -48,6 +48,24 @@ def powers():
     return make_response(response, 200)
 
 
+@app.route("powers/<int:id>", methods=["GET", "PATCH"])
+def power(id):
+    if request.method == "GET":
+        power = Power.query.filter_by(id=id).first()
+        if power:
+            response = power.to_dict()
+            return make_response(response, 200)
+        else:
+            return make_response({"error": "Power not found"}, 404)
+    # elif request.method == 'PATCH':
+    #     power = Power.query.filter_by(id=id).first()
+    #     if power:
+    #         data = request.to_json() if request.is_json else request.form
+    #         power.from_dict(data)
+    #         db.session.commit()
+    #         return make_response(power.to_dict(), 200)
+        
+
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
