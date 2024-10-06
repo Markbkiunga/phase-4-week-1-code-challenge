@@ -39,7 +39,7 @@ class Power(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    description = db.Column(db.String)
+    description = db.Column(db.String, nullable=False)
 
     # add relationship
     hero_powers = db.relationship(
@@ -51,7 +51,14 @@ class Power(db.Model, SerializerMixin):
 
     # add serialization rules
     serialize_rules = "-heroes.powers"
+
     # add validation
+    @validates("description")
+    def validate_description(self, key, value):
+        if len(value) >= 20:
+            return value
+        else:
+            raise ValueError("Description must be at least 20 characters long")
 
     def __repr__(self):
         return f"<Power {self.id}>"
@@ -71,8 +78,15 @@ class HeroPower(db.Model, SerializerMixin):
 
     # add serialization rules
     serialize_rules = ("-hero.hero_powers", "-power.hero_powers")
+
     # add validation
-    
+    @validates("strength")
+    def validate_strength(self, key, value):
+        if not value in ["Strong", "Weak", "Average"]:
+            raise ValueError(
+                "Strength must be one of the following values: 'Strong', 'Weak', 'Average'"
+            )
+        return value
 
     def __repr__(self):
         return f"<HeroPower {self.id}>"
