@@ -57,14 +57,16 @@ def power(id):
             return make_response(response, 200)
         else:
             return make_response({"error": "Power not found"}, 404)
-    # elif request.method == 'PATCH':
-    #     power = Power.query.filter_by(id=id).first()
-    #     if power:
-    #         data = request.to_json() if request.is_json else request.form
-    #         power.from_dict(data)
-    #         db.session.commit()
-    #         return make_response(power.to_dict(), 200)
-        
+    elif request.method == "PATCH":
+        power = Power.query.filter_by(id=id).first()
+        if power:
+            data = request.to_json() if request.is_json else request.form
+            for key, value in data.items():
+                setattr(power, key, value)
+            db.session.commit()
+            return make_response(power.to_dict(), 200)
+        else:
+            return make_response({"error": "Power not found"}, 404)
 
 
 if __name__ == "__main__":
