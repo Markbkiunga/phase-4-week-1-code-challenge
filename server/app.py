@@ -58,15 +58,16 @@ def power(id):
         else:
             return make_response({"error": "Power not found"}, 404)
     elif request.method == "PATCH":
-        power = Power.query.filter_by(id=id).first()
-        if power:
-            data = request.to_json() if request.is_json else request.form
+        if not power:
+            return make_response({"error": "Power not found"}, 404)
+        data = request.get_json() if request.is_json else request.form
+        try:
             for key, value in data.items():
                 setattr(power, key, value)
             db.session.commit()
             return make_response(power.to_dict(), 200)
-        else:
-            return make_response({"error": "Power not found"}, 404)
+        except ValueError as e:
+            return make_response({"errors": [str(e)]}, 400)
 
 
 if __name__ == "__main__":
