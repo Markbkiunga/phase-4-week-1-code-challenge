@@ -28,7 +28,7 @@ class Hero(db.Model, SerializerMixin):
         "hero_powers", "power", creator=lambda power_obj: HeroPower(power=power_obj)
     )
     # add serialization rules
-    serialize_rules = "-hero_powers.hero"
+    serialize_rules = ("-hero_powers.hero",)
 
     def __repr__(self):
         return f"<Hero {self.id}>"
@@ -50,11 +50,13 @@ class Power(db.Model, SerializerMixin):
     )
 
     # add serialization rules
-    serialize_rules = "-hero_powers.power"
+    serialize_rules = ("-hero_powers.power",)
 
     # add validation
     @validates("description")
     def validate_description(self, key, value):
+        if not key:
+            raise ValueError("Description must be present")
         if len(value) >= 20:
             return value
         else:
@@ -77,7 +79,10 @@ class HeroPower(db.Model, SerializerMixin):
     power = db.relationship("Power", back_populates="hero_powers")
 
     # add serialization rules
-    serialize_rules = ("-hero.hero_powers", "-power.hero_powers")
+    serialize_rules = (
+        "-hero.hero_powers",
+        "-power.hero_powers",
+    )
 
     # add validation
     @validates("strength")

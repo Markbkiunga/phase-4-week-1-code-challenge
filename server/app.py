@@ -27,7 +27,7 @@ def index():
 @app.route("/heroes")
 def heroes():
     heroes = Hero.query.all()
-    response = [hero.to_dict() for hero in heroes]
+    response = [hero.to_dict(only=("id", "name", "super_name")) for hero in heroes]
     return make_response(response, 200)
 
 
@@ -44,16 +44,16 @@ def hero(id):
 @app.route("/powers")
 def powers():
     powers = Power.query.all()
-    response = [power.to_dict() for power in powers]
+    response = [power.to_dict(only=("description", "id", "name")) for power in powers]
     return make_response(response, 200)
 
 
-@app.route("powers/<int:id>", methods=["GET", "PATCH"])
+@app.route("/powers/<int:id>", methods=["GET", "PATCH"])
 def power(id):
     if request.method == "GET":
         power = Power.query.filter_by(id=id).first()
         if power:
-            response = power.to_dict()
+            response = power.to_dict(only=("description", "id", "name"))
             return make_response(response, 200)
         else:
             return make_response({"error": "Power not found"}, 404)
