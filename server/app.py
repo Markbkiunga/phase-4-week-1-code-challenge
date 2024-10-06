@@ -50,8 +50,8 @@ def powers():
 
 @app.route("/powers/<int:id>", methods=["GET", "PATCH"])
 def power(id):
+    power = Power.query.filter_by(id=id).first()
     if request.method == "GET":
-        power = Power.query.filter_by(id=id).first()
         if power:
             response = power.to_dict(only=("description", "id", "name"))
             return make_response(response, 200)
@@ -66,8 +66,8 @@ def power(id):
                 setattr(power, key, value)
             db.session.commit()
             return make_response(power.to_dict(), 200)
-        except ValueError as e:
-            return make_response({"errors": [str(e)]}, 400)
+        except ValueError:
+            return make_response({"errors": ["validation errors"]}, 400)
 
 
 @app.route("/hero_powers", methods=["POST"])
@@ -77,9 +77,9 @@ def hero_powers():
         hero_power = HeroPower(**data)
         db.session.add(hero_power)
         db.session.commit()
-        return make_response(hero_power.to_dict(), 201)
-    except ValueError as e:
-        return make_response({"errors": [str(e)]}, 400)
+        return make_response(hero_power.to_dict(), 200)
+    except ValueError:
+        return make_response({"errors": ["validation errors"]}, 400)
 
 
 if __name__ == "__main__":
