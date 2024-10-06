@@ -28,7 +28,7 @@ class Hero(db.Model, SerializerMixin):
         "hero_powers", "power", creator=lambda power_obj: HeroPower(power=power_obj)
     )
     # add serialization rules
-    serialize_rules = "-powers.heroes"
+    serialize_rules = "-hero_powers.hero"
 
     def __repr__(self):
         return f"<Hero {self.id}>"
@@ -50,7 +50,7 @@ class Power(db.Model, SerializerMixin):
     )
 
     # add serialization rules
-    serialize_rules = "-heroes.powers"
+    serialize_rules = "-hero_powers.power"
 
     # add validation
     @validates("description")

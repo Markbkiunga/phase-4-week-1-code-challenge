@@ -7,22 +7,29 @@ from models import db, Hero, Power, HeroPower
 import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE = os.environ.get(
-    "DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db')}")
+DATABASE = os.environ.get("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db')}")
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
 
 migrate = Migrate(app, db)
 
 db.init_app(app)
 
-@app.route('/')
+
+@app.route("/")
 def index():
-    return '<h1>Code challenge</h1>'
+    return "<h1>Code challenge</h1>"
 
 
-if __name__ == '__main__':
+@app.route("/heroes")
+def heroes():
+    heroes = Hero.query.all()
+    response = [hero.to_dict() for hero in heroes]
+    return make_response(response, 200)
+
+
+if __name__ == "__main__":
     app.run(port=5555, debug=True)
