@@ -41,5 +41,12 @@ def hero(id):
         return make_response({"error": "Hero not found"}, 404)
 
 
+@app.route("/powers")
+def powers():
+    powers = Power.query.all()
+    response = [power.to_dict() for power in powers]
+    return make_response(response, 200)
+
+
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
