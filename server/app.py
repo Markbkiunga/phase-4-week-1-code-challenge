@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from models import db, Hero, Power, HeroPower
 import os
+from flask_cors import CORS
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.environ.get("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db')}")
@@ -17,6 +18,7 @@ app.json.compact = False
 migrate = Migrate(app, db)
 
 db.init_app(app)
+CORS(app)
 
 
 @app.route("/")
